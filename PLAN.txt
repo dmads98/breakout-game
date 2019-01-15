@@ -1,0 +1,98 @@
+For my breakout game, I would like to recreate the standard breakout game with variations in mechanics that affects all
+facets of the game, including each level, the paddle, the blocks, power-ups, etc. By adding in variations to these
+components in the game, I believe I can make the game more difficult and more enjoyable to play compared to the original
+basic version.
+
+After looking at other variants of the game, I found the Pinball Breakout variant interesting, as it combined the two
+classic games Breakout and Pinball to form an ultimate hybrid game. The game contained up to four paddles with pinball
+flippers and balls could travel between the two panes. Paddles for each pane had to controlled at same time increasing
+the overall difficulty of the game. Like this variant, I plan to include paddles on multiple sides of the screen that
+are controlled simultaneously by the user at certain points in the game. I will get into this further as I discuss my
+plan. Overall, apart from the original Breakout game, I plan to implement parts and features of other variants to better
+improve my game.
+
+Upon running the program, the user will see a start-up screen that displays the title of the game, the current high
+scorer and score for the session, as well as a button to access help menu. This help menu will detail the instructions
+of the game, including how the levels works, the point system, as well as the various abilities of the blocks, paddle,
+and power-ups. The user can click a "back" button to access the home screen again.
+
+After clicking the "play" button, the user will begin level one of the game. The game will have four different levels
+with each having additional features for the game that build upon one another. For each level, the game will display two
+panes on screen. Both panes will be of the same height and connected to each other. The first and second pane will have
+about a 1:3 ratio in terms of width. The first pane will have buttons to exit to main menu and to pause the game. When
+the user clicks the "menu" button, a dialog will pop up asking if the user is sure that he/she wants to exit the game
+and return to the main menu, also stating that progress will be lost and the score will not count. The user will have
+yes and no options. The user can also click the "pause" button, which will pause the game up to 60 seconds. After the 60
+seconds, the game will resume. When the user clicks the "pause" button, the button will become a "resume" button. It
+will become a "pause" button again after the game is resumed. The level number will be displayed under the
+"pause/resume" button. The number of lives will be displayed under the level number. The current score for the level
+will be displayed under the number of lives in slightly bigger font. This first pane will not change between the levels.
+The second pane will be where the game is actually played.
+
+Level one will be the easiest difficulty and will feature basic gameplay with limited features. The paddle for this
+level will be at the bottom of the screen and its length will be about 1/5 of the width of the screen. The level will
+contain nine rows of 12 rectangular blocks each. Each row will stretch the width of the game screen. The blocks on each
+row will be of a different color. If the ball breaks a block on the bottom or first row, the user will earn 1 point.
+Blocks on the second row are worth two points and so on. The user can move the paddle side to side along the bottom of
+the screen. If the user goes past the edges of the screen, the paddle will wrap around to the other side. The ball will
+start connected to the paddle. The ball will release once the user clicks the screen. The user can move the paddle
+freely even if the ball has not been released yet. The ball will release straight upward. If the ball hits the left
+third or right third of the paddle, the ball will bounce back in the same direction from which it came. If the ball hits
+the middle third of the paddle, the ball bounce off the paddle normally. This paddle logic will apply for every level.
+
+The ball can bounce of all walls except the bottom. If the ball goes past the bottom wall, the user will lose a life.
+The ball will reset and be connected to the paddle again. If the player allows the ball to go past the bottom wall and
+has 0 lives left, the game will end. A dialog will pop up asking the user to enter his/her name. Once the user enters a
+name, another dialog will pop up displaying the top five high scores and players for the current session.
+Levels will end once all blocks are broken. If the user completes the current level, a dialog will pop up,
+stating the user's current total score along with a "Next" button. The user will proceed to the next level upon clicking
+"Next".
+
+Level two will increase in difficulty and will have additional features. The length of the paddle will remain the same.
+THe ball however will move a bit faster throughout the level. This level will have the same block configuration as the
+previous level, however there will be an extra row added to the bottom of gray metal color blocks. These blocks will
+require two hits to be broken and will not give the user any points. The block will turn a darker color after being hit
+once. Randomly dispersed throughout the rest of the rows will be power up blocks. Level two will contain 6 power up
+blocks. Although these blocks do not give the user any points when hit, a powerup icon will slowly descend to the bottom
+of the screen directly down from the broken block. If the paddle catches the powerup icon, the user will be given a
+random powerup. These powerups are listed below:
+
+    Extra ball: Once the powerup is activated, an extra ball will shoot out straight up from the center of the paddle,
+    whererever it is.
+
+    Double points: Once the powerup is activated, the user will earn double points for 15 seconds.
+
+    +50 bonus: Once the powerup is activated, the user will immediately earn 50 points.
+
+    Laser: Once the powerup is activated, a lazer will added to the paddle and will shoot lazers straight upward every
+    second for 15 seconds. The lazer will do one health damage to a block.
+
+    Stretched paddle: Once the powerup is activated, the paddle will double in length for 15 seconds.
+
+    Extra life: Once the powerup is activated, the user will earn an extra life.
+
+Level three will increase in difficulty and will have additional features. The length of the paddle will shrink by 30%.
+The ball move a bit faster throughout the level. This level will have a block structure in the shape of a diamond. The
+structure will start one row closer to the paddle than usual. The diamond will still be composed of rectangular blocks,
+and will be half a block away from each side wall at its widest point. The diamond will be approximately 10 blocks tall.
+The blocks that will compose the diamond will be randomized with each block having a point count based on its color.
+There will be grey metal blocks interspersed that have double health. There will be eight powerups randomly placed in
+the diamond.
+
+Level four will increase in difficulty and will have additional features. The length of the paddle will remain the same
+as the previous level. The ball will move at the same speed as the previous level. The level will have the same diamond
+structure as the previous level. However, this level will have an additional paddle at the top of the screen. Balls
+that go past the top wall will be lost. The user starts with two balls, each connected to one of the paddles. If the
+user loses a ball, the game continues. If the user loses both balls, the user loses a life and both paddles reset again
+with two balls. Powerups will still descend downwards and must be caught by the bottom paddle. If an extra ball powerup
+is activated, two extra balls are added, one from each paddle. If a laser powerup is caught, both paddles gets lazers.
+If a stretched paddle powerup is caught, both paddles are stretched.
+
+Once the user completes level four, a dialog will pop up asking asking the user to enter his/her name. Once the user
+enters a name, another dialog will pop up displaying the top five high scores and players for the current session, as
+well as the users score. The bottom of the dialog will have a "Play Again" button, which will reset the entire game.
+
+Given extra time or provided that I am able to complete my basic requirements early, I would like to add a settings
+button to the home screen, that has options to disable music or reset high scores for the session. Additionally, I would
+like to add a block that has a picture of a bomb on it and descends from the top from a random point every 15 seconds.
+If the paddle gets hit by this block, the user will lose a life. This feature would start from the second level.
