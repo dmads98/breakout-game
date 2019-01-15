@@ -3,11 +3,11 @@ game
 
 This project implements the game of Breakout.
 
-Name: 
+Name: Dhanush Madabusi
 
 ### Timeline
 
-Start Date: 
+Start Date: 1/13/19
 
 Finish Date: 
 
