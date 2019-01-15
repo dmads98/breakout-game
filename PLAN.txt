@@ -96,3 +96,12 @@ Given extra time or provided that I am able to complete my basic requirements ea
 button to the home screen, that has options to disable music or reset high scores for the session. Additionally, I would
 like to add a block that has a picture of a bomb on it and descends from the top from a random point every 15 seconds.
 If the paddle gets hit by this block, the user will lose a life. This feature would start from the second level.
+
+Cheat keys:
+    R: restart current level
+    M: go to main menu
+    1: go to Level 1
+    2: go to Level 2
+    3: go to Level 3
+    4: go to Level 4
+    A: add one life
