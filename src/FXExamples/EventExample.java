@@ -1,16 +1,13 @@
-package EventExample;
+package FXExamples;
 
 import javafx.animation.PathTransition;
 import javafx.application.Application;
-import static javafx.application.Application.launch;
 import javafx.event.EventHandler;
-
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
@@ -89,9 +86,9 @@ public class EventExample extends Application {
         playButton.setLayoutX(300);
         playButton.setLayoutY(250);
 
-        circle.setOnMouseClicked (new EventHandler<javafx.scene.input.MouseEvent>() {
+        circle.setOnMouseClicked (new EventHandler<MouseEvent>() {
             @Override
-            public void handle(javafx.scene.input.MouseEvent e) {
+            public void handle(MouseEvent e) {
                 System.out.println("Hello World");
                 circle.setFill(Color.DARKSLATEBLUE);
             }

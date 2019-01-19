@@ -1,4 +1,4 @@
-package animationEx;
+package FXExamples;
 
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
@@ -56,7 +56,7 @@ public class AnimationExample extends Application {
         Scene scene = new Scene(root, 600, 300);
 
         //Setting title to the Stage
-        stage.setTitle("Translate transition example");
+        stage.setTitle("Translate transition FXExamples");
 
         //Adding scene to the stage
         stage.setScene(scene);

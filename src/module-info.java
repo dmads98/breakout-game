@@ -4,5 +4,5 @@ module game_dm322 {
     requires javafx.graphics;
     requires javafx.media;
 
-    exports EventExample;
+    exports FXExamples;
 }
