@@ -1,6 +1,5 @@
 package game_components;
 
-import javafx.scene.Node;
 import javafx.scene.effect.Lighting;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
@@ -8,31 +7,38 @@ import javafx.scene.shape.Rectangle;
 
 public class Paddle {
 
-    private static final double PADDLE_SPEED = 20.0;
+    private static final double INITIAL_SPEED = 0.0;
+    private static final double PADDLE_SPEED = 150.0;
+    private static final double PADDLE_HEIGHT = 20.0;
+    private static final double PADDLE_ARC_WIDTH = 20.0;
+    private static final double PADDLE_ARC_HEIGHT = 20.0;
+    private static final int FRAMES_PER_SECOND = 60;
+    private static final double SECOND_DELAY = 1.0 / FRAMES_PER_SECOND;
 
     private Rectangle paddle;
-    private double xPos;
-    private double yPos;
-    private double width;
-    private double height;
-
-    public Node node;
+    private double paddleSpeed;
 
 
     public Paddle(double xPos, double yPos, double width){
-        this.paddle = new Rectangle();
+        paddle = new Rectangle();
         paddle.setX(xPos);
         paddle.setY(yPos);
         paddle.setWidth(width);
-        paddle.setHeight(20.0);
-        paddle.setArcWidth(20.0);
-        paddle.setArcHeight(20.0);
+        paddle.setHeight(PADDLE_HEIGHT);
+        paddle.setArcWidth(PADDLE_ARC_WIDTH);
+        paddle.setArcHeight(PADDLE_ARC_HEIGHT);
         paddle.setFill(Color.GRAY);
         paddle.setStroke(Color.BLACK);
         paddle.setEffect(new Lighting());
-        //paddle.setOnKeyPressed(e -> handleKeyInput(e.getCode()));
+        paddleSpeed = INITIAL_SPEED;
+    }
 
-        node = paddle;
+    public Rectangle getPaddle(){
+        return paddle;
+    }
+
+    public double getPaddleSpeed() {
+        return paddleSpeed;
     }
 
     public double getXPos() {
@@ -59,12 +65,22 @@ public class Paddle {
         paddle.setWidth(width);
     }
 
-    public void handleKeyInput(KeyCode code) {
-        if (code == KeyCode.L) {
-            paddle.setX(paddle.getX() + PADDLE_SPEED);
+    public void handleKeyPressInput(KeyCode code) {
+        if (code == KeyCode.RIGHT) {
+            paddleSpeed = PADDLE_SPEED;
         }
-        else if (code == KeyCode.J) {
-            paddle.setX(paddle.getX() - PADDLE_SPEED);
+        else if (code == KeyCode.LEFT) {
+            paddleSpeed = -PADDLE_SPEED;
         }
+    }
+
+    public void handleKeyReleaseInput(KeyCode code) {
+        if (code == KeyCode.RIGHT || code == KeyCode.LEFT) {
+            paddleSpeed = INITIAL_SPEED;
+        }
+    }
+
+    public void updateLocation() {
+        paddle.setX(paddle.getX() + getPaddleSpeed() * SECOND_DELAY);
     }
 }

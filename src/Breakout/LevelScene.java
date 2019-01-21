@@ -1,5 +1,6 @@
 package Breakout;
 
+import game_components.Paddle;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
@@ -16,11 +17,13 @@ import javafx.scene.text.Text;
 public class LevelScene implements GameScene{
 
     private static final Color LEVEL_BACKGROUND = Color.AQUAMARINE;
-    private static final double LEVEl_WIDTH = 500.0;
+    private static final double LEVEL_WIDTH = 500.0;
     private static final double LEVEL_HEIGHT = 500.0;
+    private static final double DEFAULT_PADDLE_WIDTH = 100.0;
 
     private int sceneCode;
     private int levelNumber;
+    private Paddle paddle;
 
     /**
      * The constructor sets the levelNumber to parameter and sets the sceneCode to INITIALIZE_LEVEL.
@@ -45,21 +48,24 @@ public class LevelScene implements GameScene{
     @Override
     public Scene setUpScene() {
         var root = new Group();
-        var scene = new Scene(root, LEVEl_WIDTH, LEVEL_HEIGHT, LEVEL_BACKGROUND);
+        var scene = new Scene(root, LEVEL_WIDTH, LEVEL_HEIGHT, LEVEL_BACKGROUND);
 
         //placeholder title
         Text title = new Text();
         title.setFont(new Font(40.0));
-        title.setX(LEVEl_WIDTH/2 );
+        title.setX(LEVEL_WIDTH/2);
         title.setY(LEVEL_HEIGHT/2 - 100);
         title.setText("Level" + levelNumber);
 
+        paddle = new Paddle(LEVEL_WIDTH/2.0 - DEFAULT_PADDLE_WIDTH/2, LEVEL_HEIGHT - 50.0, DEFAULT_PADDLE_WIDTH);
 
-        root.getChildren().addAll(title);
+
+        root.getChildren().addAll(title, paddle.getPaddle());
         sceneCode = GameScene.CURRENT_LEVEL;
 
         //set ups key press events and corresponding logic
-        scene.setOnKeyPressed(keyEvent -> keyBoardEvent(keyEvent.getCode()));
+        scene.setOnKeyPressed(keyEvent -> keyBoardPressEvent(keyEvent.getCode()));
+        scene.setOnKeyReleased(keyEvent -> keyBoardReleaseEvent(keyEvent.getCode()));
 
         return scene;
     }
@@ -69,7 +75,8 @@ public class LevelScene implements GameScene{
      *
      * @param code value for keycode for event
      */
-    private void keyBoardEvent(KeyCode code) {
+    private void keyBoardPressEvent(KeyCode code) {
+        paddle.handleKeyPressInput(code);
         handleCheatKeys(code);
     }
 
@@ -95,8 +102,13 @@ public class LevelScene implements GameScene{
 
     }
 
+    private void keyBoardReleaseEvent(KeyCode code) {
+        paddle.handleKeyReleaseInput(code);
+    }
+
     @Override
     public void step() {
+        paddle.updateLocation();
 
     }
 }
