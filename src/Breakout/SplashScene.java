@@ -17,7 +17,7 @@ import javafx.scene.text.Text;
 public class SplashScene implements GameScene{
 
     //splash scene has unique dimensions and color compared to Level Scenes
-    private static final Color SPLASH_BACKGROUND = Color.BURLYWOOD;
+    private static final Color SPLASH_BACKGROUND = Color.LAVENDER;
     private static final double SPLASH_WIDTH = 500.0;
     private static final double SPLASH_HEIGHT = 500.0;
     //private Scene scene;
@@ -33,8 +33,8 @@ public class SplashScene implements GameScene{
     }
 
     @Override
-    public void setSceneCode(int code) {
-        sceneCode = code;
+    public void setSceneCode(int sceneCode) {
+        this.sceneCode = sceneCode;
     }
 
     @Override
@@ -45,15 +45,15 @@ public class SplashScene implements GameScene{
         //placeholder title
         Text title = new Text();
         title.setFont(new Font(40.0));
-        title.setX(60.0);
-        title.setY(150.0);
-        title.setText("Welcome to Breakout TEST");
+        title.setX(SPLASH_WIDTH/2 );
+        title.setY(SPLASH_HEIGHT/2 - 100);
+        title.setText("Breakout");
 
         //placeholder "Play" button
 
         Button playButton = new Button("Play");
-        playButton.setLayoutX(300);
-        playButton.setLayoutY(250);
+        playButton.setLayoutX(SPLASH_WIDTH/2);
+        playButton.setLayoutY(SPLASH_HEIGHT/2);
         playButton.setOnMouseClicked((new EventHandler<MouseEvent>() {
             public void handle(MouseEvent event) {
                 System.out.println("Game Started");
@@ -66,4 +66,8 @@ public class SplashScene implements GameScene{
 
         return scene;
     }
+
+    //no animation in SplashScene
+    @Override
+    public void step() { }
 }

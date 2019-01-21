@@ -23,11 +23,31 @@ public interface GameScene {
     int CHEAT_LEVEL_4 = 8;
 
 
+    /**
+     * Gets sceneCode of this scene
+     *
+     * @return value of sceneCode
+     */
     int getSceneCode();
 
-    void setSceneCode(int code);
+    /**
+     * Sets sceneCode of this scene to code
+     *
+     * @param sceneCode value of new sceneCode
+     */
+    void setSceneCode(int sceneCode);
 
+    /**
+     * Creates scene for this section of game.
+     *
+     * @return scene for this section of game
+     */
     Scene setUpScene();
+
+    /**
+     * Runs one step in animation for this scene
+     */
+    void step();
 
 
 }
