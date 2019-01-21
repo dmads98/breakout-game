@@ -1,6 +1,8 @@
 package Breakout;
 
+import game_components.Ball;
 import game_components.Paddle;
+import javafx.collections.ObservableList;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
@@ -24,6 +26,7 @@ public class LevelScene implements GameScene{
     private int sceneCode;
     private int levelNumber;
     private Paddle paddle;
+    private Ball ball;
 
     /**
      * The constructor sets the levelNumber to parameter and sets the sceneCode to INITIALIZE_LEVEL.
@@ -58,9 +61,13 @@ public class LevelScene implements GameScene{
         title.setText("Level" + levelNumber);
 
         paddle = new Paddle(LEVEL_WIDTH/2.0 - DEFAULT_PADDLE_WIDTH/2, LEVEL_HEIGHT - 50.0, DEFAULT_PADDLE_WIDTH);
+        ball = new Ball(LEVEL_WIDTH/2.0, LEVEL_HEIGHT - 200.0, 200.0, 130.0);
 
 
-        root.getChildren().addAll(title, paddle.getPaddle());
+        ObservableList rootElements = root.getChildren();
+        //rootElements.add(title);
+        //rootElements.add(paddle.getPaddleNode());
+        rootElements.add(ball.getBallNode());
         sceneCode = GameScene.CURRENT_LEVEL;
 
         //set ups key press events and corresponding logic
@@ -108,7 +115,8 @@ public class LevelScene implements GameScene{
 
     @Override
     public void step() {
-        paddle.updateLocation();
+        paddle.updateLocation(LEVEL_WIDTH, LEVEL_HEIGHT);
+        ball.updateLocation(LEVEL_WIDTH, LEVEL_HEIGHT);
 
     }
 }

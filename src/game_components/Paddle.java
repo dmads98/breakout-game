@@ -1,5 +1,6 @@
 package game_components;
 
+import Breakout.GameLauncher;
 import javafx.scene.effect.Lighting;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
@@ -8,12 +9,10 @@ import javafx.scene.shape.Rectangle;
 public class Paddle {
 
     private static final double INITIAL_SPEED = 0.0;
-    private static final double PADDLE_SPEED = 150.0;
+    private static final double PADDLE_SPEED = 200.0;
     private static final double PADDLE_HEIGHT = 20.0;
     private static final double PADDLE_ARC_WIDTH = 20.0;
     private static final double PADDLE_ARC_HEIGHT = 20.0;
-    private static final int FRAMES_PER_SECOND = 60;
-    private static final double SECOND_DELAY = 1.0 / FRAMES_PER_SECOND;
 
     private Rectangle paddle;
     private double paddleSpeed;
@@ -33,7 +32,7 @@ public class Paddle {
         paddleSpeed = INITIAL_SPEED;
     }
 
-    public Rectangle getPaddle(){
+    public Rectangle getPaddleNode(){
         return paddle;
     }
 
@@ -80,7 +79,13 @@ public class Paddle {
         }
     }
 
-    public void updateLocation() {
-        paddle.setX(paddle.getX() + getPaddleSpeed() * SECOND_DELAY);
+    public void updateLocation(double levelWidth, double levelHeight) {
+        if (this.getXPos() < -this.getWidth()){
+            this.setXPos(levelWidth - this.getWidth());
+        }
+        if (this.getXPos() > levelHeight + this.getWidth()){
+            this.setXPos(0);
+        }
+        this.setXPos(this.getXPos() + getPaddleSpeed() * GameLauncher.SECOND_DELAY);
     }
 }

@@ -17,7 +17,7 @@ import javafx.scene.text.Text;
 public class SplashScene implements GameScene{
 
     //splash scene has unique dimensions and color compared to Level Scenes
-    private static final Color SPLASH_BACKGROUND = Color.LAVENDER;
+    private static final Color SPLASH_BACKGROUND = Color.PINK;
     private static final double SPLASH_WIDTH = 500.0;
     private static final double SPLASH_HEIGHT = 500.0;
     //private Scene scene;
