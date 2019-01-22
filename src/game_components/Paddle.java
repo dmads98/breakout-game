@@ -9,7 +9,7 @@ import javafx.scene.shape.Rectangle;
 public class Paddle {
 
     private static final double INITIAL_SPEED = 0.0;
-    private static final double PADDLE_SPEED = 200.0;
+    private static final double PADDLE_SPEED = 250.0;
     private static final double PADDLE_HEIGHT = 20.0;
     private static final double PADDLE_ARC_WIDTH = 20.0;
     private static final double PADDLE_ARC_HEIGHT = 20.0;
@@ -64,6 +64,10 @@ public class Paddle {
         paddle.setWidth(width);
     }
 
+    public double getPaddleHeight(){
+        return PADDLE_HEIGHT;
+    }
+
     public void handleKeyPressInput(KeyCode code) {
         if (code == KeyCode.RIGHT) {
             paddleSpeed = PADDLE_SPEED;
@@ -83,7 +87,7 @@ public class Paddle {
         if (this.getXPos() < -this.getWidth()){
             this.setXPos(levelWidth - this.getWidth());
         }
-        if (this.getXPos() > levelHeight + this.getWidth()){
+        if (this.getXPos() > levelHeight){
             this.setXPos(0);
         }
         this.setXPos(this.getXPos() + getPaddleSpeed() * GameLauncher.SECOND_DELAY);

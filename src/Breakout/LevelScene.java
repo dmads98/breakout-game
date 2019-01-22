@@ -7,6 +7,7 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
@@ -58,15 +59,15 @@ public class LevelScene implements GameScene{
         title.setFont(new Font(40.0));
         title.setX(LEVEL_WIDTH/2);
         title.setY(LEVEL_HEIGHT/2 - 100);
-        title.setText("Level" + levelNumber);
+        title.setText("Level " + levelNumber);
 
         paddle = new Paddle(LEVEL_WIDTH/2.0 - DEFAULT_PADDLE_WIDTH/2, LEVEL_HEIGHT - 50.0, DEFAULT_PADDLE_WIDTH);
-        ball = new Ball(LEVEL_WIDTH/2.0, LEVEL_HEIGHT - 200.0, 200.0, 130.0);
+        ball = new Ball(LEVEL_WIDTH/2.0, LEVEL_HEIGHT - 200.0, 150.0, -110.0);
 
 
         ObservableList rootElements = root.getChildren();
         //rootElements.add(title);
-        //rootElements.add(paddle.getPaddleNode());
+        rootElements.add(paddle.getPaddleNode());
         rootElements.add(ball.getBallNode());
         sceneCode = GameScene.CURRENT_LEVEL;
 
@@ -104,9 +105,7 @@ public class LevelScene implements GameScene{
             case Q:
                 setSceneCode(GameScene.LEVEL_QUIT);
                 break;
-
         }
-
     }
 
     private void keyBoardReleaseEvent(KeyCode code) {
@@ -115,8 +114,22 @@ public class LevelScene implements GameScene{
 
     @Override
     public void step() {
+        updateComponentLocations();
+        checkBallPaddleCollision();
+    }
+
+    private void updateComponentLocations() {
         paddle.updateLocation(LEVEL_WIDTH, LEVEL_HEIGHT);
         ball.updateLocation(LEVEL_WIDTH, LEVEL_HEIGHT);
+    }
 
+    private void checkBallPaddleCollision() {
+        if (checkShapesIntersect(ball.getBallNode(), paddle.getPaddleNode())){
+            ball.collideWithPaddle(paddle);
+        }
+    }
+
+    private boolean checkShapesIntersect(Shape shape1, Shape shape2) {
+        return (Shape.intersect(shape1, shape2).getBoundsInLocal().getWidth() > 0);
     }
 }
