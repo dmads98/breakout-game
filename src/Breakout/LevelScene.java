@@ -1,6 +1,7 @@
 package Breakout;
 
 import game_components.Ball;
+import game_components.BallGroupController;
 import game_components.Paddle;
 import javafx.collections.ObservableList;
 import javafx.scene.Group;
@@ -24,17 +25,19 @@ public class LevelScene implements GameScene{
     private static final double LEVEL_HEIGHT = 500.0;
     private static final double DEFAULT_PADDLE_WIDTH = 100.0;
 
+    private boolean levelReset = true;
     private int sceneCode;
     private int levelNumber;
     private Paddle paddle;
-    private Ball ball;
+    private BallGroupController ballGroupController;
+    private Text levelResetLabel;
 
     /**
      * The constructor sets the levelNumber to parameter and sets the sceneCode to INITIALIZE_LEVEL.
      * EXPLAIN!
      * @param levelNumber the number of this level
      */
-    public LevelScene(int levelNumber){
+    LevelScene(int levelNumber){
         this.levelNumber = levelNumber;
         sceneCode = GameScene.INITIALIZE_LEVEL;
     }
@@ -54,21 +57,23 @@ public class LevelScene implements GameScene{
         var root = new Group();
         var scene = new Scene(root, LEVEL_WIDTH, LEVEL_HEIGHT, LEVEL_BACKGROUND);
 
-        //placeholder title
-        Text title = new Text();
-        title.setFont(new Font(40.0));
-        title.setX(LEVEL_WIDTH/2);
-        title.setY(LEVEL_HEIGHT/2 - 100);
-        title.setText("Level " + levelNumber);
-
         paddle = new Paddle(LEVEL_WIDTH/2.0 - DEFAULT_PADDLE_WIDTH/2, LEVEL_HEIGHT - 50.0, DEFAULT_PADDLE_WIDTH);
-        ball = new Ball(LEVEL_WIDTH/2.0, LEVEL_HEIGHT - 200.0, 150.0, -110.0);
 
+        //add switch statement to set different speeds per level
+        ballGroupController = new BallGroupController(195.0,-140.0);
+        ballGroupController.initializeBall(paddle);
+
+        levelResetLabel = new Text();
+        levelResetLabel.setFont(new Font(20.0));
+        levelResetLabel.setX(60.0);
+        levelResetLabel.setY(150.0);
+        levelResetLabel.setText("Press the Space bar to start!");
 
         ObservableList rootElements = root.getChildren();
-        //rootElements.add(title);
         rootElements.add(paddle.getPaddleNode());
-        rootElements.add(ball.getBallNode());
+        rootElements.add(ballGroupController.getBallGroup());
+        rootElements.add(levelResetLabel);
+
         sceneCode = GameScene.CURRENT_LEVEL;
 
         //set ups key press events and corresponding logic
@@ -85,6 +90,10 @@ public class LevelScene implements GameScene{
      */
     private void keyBoardPressEvent(KeyCode code) {
         paddle.handleKeyPressInput(code);
+        if (code == KeyCode.SPACE) {
+            levelReset = false;
+            levelResetLabel.setVisible(false);
+        }
         handleCheatKeys(code);
     }
 
@@ -114,18 +123,31 @@ public class LevelScene implements GameScene{
 
     @Override
     public void step() {
-        updateComponentLocations();
-        checkBallPaddleCollision();
-    }
-
-    private void updateComponentLocations() {
         paddle.updateLocation(LEVEL_WIDTH, LEVEL_HEIGHT);
-        ball.updateLocation(LEVEL_WIDTH, LEVEL_HEIGHT);
+        updateBallLocations();
+        if (!levelReset) {
+            checkAllBallPaddleCollisions();
+        }
     }
 
-    private void checkBallPaddleCollision() {
-        if (checkShapesIntersect(ball.getBallNode(), paddle.getPaddleNode())){
-            ball.collideWithPaddle(paddle);
+    private void checkAllBallPaddleCollisions() {
+        for (Ball ball: ballGroupController.getBallList()){
+            if (checkShapesIntersect(ball.getBallNode(), paddle.getPaddleNode())){
+                ball.collideWithPaddle(paddle);
+            }
+        }
+    }
+
+    private void updateBallLocations() {
+        var ballList = ballGroupController.getBallList();
+        for (Ball ball: ballList){
+            ball.updateLocation(LEVEL_WIDTH, LEVEL_HEIGHT, levelReset, paddle);
+            if (ball.resetBall){
+                levelReset = ballGroupController.resetBall(ball, paddle);
+                if (levelReset){
+                    levelResetLabel.setVisible(true);
+                }
+            }
         }
     }
 

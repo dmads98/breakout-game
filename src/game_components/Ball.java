@@ -8,6 +8,7 @@ import javafx.scene.shape.Circle;
 public class Ball {
 
     public static final double RADIUS = 8.0;
+    public boolean resetBall = false;
 
     private Circle ball;
     private double xSpeed;
@@ -74,9 +75,19 @@ public class Ball {
         return ball.getRadius();
     }
 
-    public void updateLocation(double levelWidth, double levelHeight) {
-        updateCoordinates();
-        checkBoundaryCollisions(levelWidth, levelHeight);
+    public void updateLocation(double levelWidth, double levelHeight, boolean levelReset, Paddle paddle) {
+        if (!levelReset) {
+            updateCoordinates();
+            checkBoundaryCollisions(levelWidth, levelHeight);
+        }
+        else{
+            updateCoordinatesToPaddle(paddle);
+        }
+    }
+
+    private void updateCoordinatesToPaddle(Paddle paddle) {
+        this.setXPos(paddle.getXPos() + paddle.getWidth()/2);
+        this.setYPos(paddle.getYPos() - Ball.RADIUS);
     }
 
     private void updateCoordinates(){
@@ -85,26 +96,24 @@ public class Ball {
     }
 
     private void checkBoundaryCollisions(double levelWidth, double levelHeight){
-        if (leftBoundaryCollision(levelWidth) || rightBoundaryCollision(levelWidth)){
+        if (leftBoundaryCollision() || rightBoundaryCollision(levelWidth)){
             this.setXSpeed(this.getXSpeed() * -1);
         }
-        if (topBoundaryCollision(levelHeight)){
+        if (topBoundaryCollision()){
             this.setYSpeed(this.getYSpeed() * -1);
         }
         if (bottomBoundaryCollision(levelHeight)){
-            resetBall();
+            resetBall = true;
         }
     }
 
-    private void resetBall() {
-        this.setXPos(RESET_XPOS);
-        this.setYPos(RESET_YPOS);
-        this.setXSpeed(RESET_XSPEED);
-        this.setYSpeed(RESET_YSPEED);
-
+    void resetBallSpeed(double resetXSpeed, double resetYSpeed){
+        this.setXSpeed(resetXSpeed);
+        this.setYSpeed(resetYSpeed);
+        this.resetBall = false;
     }
 
-    private boolean leftBoundaryCollision(double levelWidth) {
+    private boolean leftBoundaryCollision() {
         return (this.getXPos() - this.getRadius()) < 0;
     }
 
@@ -112,7 +121,7 @@ public class Ball {
         return (this.getXPos() + this.getRadius()) > levelWidth;
     }
 
-    private boolean topBoundaryCollision(double levelHeight) {
+    private boolean topBoundaryCollision() {
         return (this.getYPos() - this.getRadius()) < 0;
     }
 

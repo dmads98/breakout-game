@@ -36,7 +36,7 @@ public class Paddle {
         return paddle;
     }
 
-    public double getPaddleSpeed() {
+    double getPaddleSpeed() {
         return paddleSpeed;
     }
 
@@ -44,16 +44,12 @@ public class Paddle {
         return paddle.getX();
     }
 
-    public void setXPos(double xPos) {
+    private void setXPos(double xPos) {
         paddle.setX(xPos);
     }
 
     public double getYPos() {
         return paddle.getY();
-    }
-
-    public void setYPos(double yPos) {
-        paddle.setY(yPos);
     }
 
     public double getWidth() {
@@ -62,10 +58,6 @@ public class Paddle {
 
     public void setWidth(double width) {
         paddle.setWidth(width);
-    }
-
-    public double getPaddleHeight(){
-        return PADDLE_HEIGHT;
     }
 
     public void handleKeyPressInput(KeyCode code) {
