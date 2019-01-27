@@ -2,6 +2,7 @@ package Breakout;
 
 import game_components.Ball;
 import game_components.BallGroupController;
+import game_components.BlockMatrix;
 import game_components.Paddle;
 import javafx.collections.ObservableList;
 import javafx.scene.Group;
@@ -21,7 +22,7 @@ import javafx.scene.text.Text;
 public class LevelScene implements GameScene{
 
     private static final Color LEVEL_BACKGROUND = Color.AQUAMARINE;
-    private static final double LEVEL_WIDTH = 500.0;
+    public static final double LEVEL_WIDTH = 500.0;
     private static final double LEVEL_HEIGHT = 500.0;
     private static final double DEFAULT_PADDLE_WIDTH = 100.0;
 
@@ -30,6 +31,7 @@ public class LevelScene implements GameScene{
     private int levelNumber;
     private Paddle paddle;
     private BallGroupController ballGroupController;
+    private BlockMatrix blockMatrix;
     private Text levelResetLabel;
 
     /**
@@ -65,18 +67,22 @@ public class LevelScene implements GameScene{
 
         levelResetLabel = new Text();
         levelResetLabel.setFont(new Font(20.0));
-        levelResetLabel.setX(60.0);
-        levelResetLabel.setY(150.0);
+        levelResetLabel.setX(40.0);
+        levelResetLabel.setY(350.0);
         levelResetLabel.setText("Press the Space bar to start!");
+
+        blockMatrix = new BlockMatrix(levelNumber);
+        Group blockGroup = blockMatrix.createBlockGroup();
 
         ObservableList rootElements = root.getChildren();
         rootElements.add(paddle.getPaddleNode());
         rootElements.add(ballGroupController.getBallGroup());
         rootElements.add(levelResetLabel);
+        rootElements.add(blockGroup);
 
         sceneCode = GameScene.CURRENT_LEVEL;
 
-        //set ups key press events and corresponding logic
+        //sets up key press and release events and corresponding logic
         scene.setOnKeyPressed(keyEvent -> keyBoardPressEvent(keyEvent.getCode()));
         scene.setOnKeyReleased(keyEvent -> keyBoardReleaseEvent(keyEvent.getCode()));
 
@@ -127,6 +133,30 @@ public class LevelScene implements GameScene{
         updateBallLocations();
         if (!levelReset) {
             checkAllBallPaddleCollisions();
+            checkAllBallBlockCollisions();
+        }
+        checkIfLevelIsDone();
+    }
+
+    private void checkIfLevelIsDone() {
+        if (blockMatrix.getNumBlocksAlive() == 0){
+            setSceneCode(GameScene.LEVEL_COMPLETE);
+        }
+    }
+
+    private void checkAllBallBlockCollisions() {
+        for (Ball ball: ballGroupController.getBallList()){
+            for (int row = 0; row < blockMatrix.getNumRows(); row++){
+                for (int col = 0; col < blockMatrix.getNumCols(); col++){
+                    var block = blockMatrix.getMatrix()[row][col];
+                    if (block != null) {
+                        if (checkShapesIntersect(ball.getBallNode(), block.getBlockNode())){
+                            ball.collideWithBlock(block);
+                            blockMatrix.removeBlock(block, row, col);
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -143,7 +173,7 @@ public class LevelScene implements GameScene{
         for (Ball ball: ballList){
             ball.updateLocation(LEVEL_WIDTH, LEVEL_HEIGHT, levelReset, paddle);
             if (ball.resetBall){
-                levelReset = ballGroupController.resetBall(ball, paddle);
+                levelReset = ballGroupController.resetBall(ball);
                 if (levelReset){
                     levelResetLabel.setVisible(true);
                 }

@@ -40,7 +40,7 @@ public class Paddle {
         return paddleSpeed;
     }
 
-    public double getXPos() {
+    double getXPos() {
         return paddle.getX();
     }
 
@@ -48,11 +48,11 @@ public class Paddle {
         paddle.setX(xPos);
     }
 
-    public double getYPos() {
+    double getYPos() {
         return paddle.getY();
     }
 
-    public double getWidth() {
+    double getWidth() {
         return paddle.getWidth();
     }
 
@@ -76,12 +76,15 @@ public class Paddle {
     }
 
     public void updateLocation(double levelWidth, double levelHeight) {
-        if (this.getXPos() < -this.getWidth()){
-            this.setXPos(levelWidth - this.getWidth());
+        var newXPos = this.getXPos() + getPaddleSpeed() * GameLauncher.SECOND_DELAY;
+        if (newXPos < 0.0){
+            this.setXPos(0.0);
         }
-        if (this.getXPos() > levelHeight){
-            this.setXPos(0);
+        else if (newXPos > levelWidth - getWidth()){
+            this.setXPos(levelWidth - getWidth());
         }
-        this.setXPos(this.getXPos() + getPaddleSpeed() * GameLauncher.SECOND_DELAY);
+        else{
+            this.setXPos(newXPos);
+        }
     }
 }

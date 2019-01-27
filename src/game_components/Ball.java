@@ -7,25 +7,20 @@ import javafx.scene.shape.Circle;
 
 public class Ball {
 
-    public static final double RADIUS = 8.0;
+    static final double RADIUS = 8.0;
     public boolean resetBall = false;
 
     private Circle ball;
     private double xSpeed;
     private double ySpeed;
-    private static final double RESET_XPOS = 250.0;
-    private static final double RESET_YPOS = 250.0;
-    private static final double RESET_XSPEED = 195.0;
-    private static final double RESET_YSPEED = -140.0;
 
-
-    public Ball(double xPos, double yPos, double xSpeed, double ySpeed){
+    Ball(double xPos, double yPos, double xSpeed, double ySpeed){
 
         ball = new Circle();
         ball.setCenterX(xPos);
         ball.setCenterY(yPos);
         ball.setRadius(RADIUS);
-        ball.setFill(Color.TOMATO);
+        ball.setFill(Color.GHOSTWHITE);
         ball.setStroke(Color.BLACK);
         ball.setEffect(new Lighting());
 
@@ -130,7 +125,7 @@ public class Ball {
     }
 
     public void collideWithPaddle(Paddle paddle) {
-        String side = determineSideCollidedWith(paddle);
+        String side = determineSideCollidedWithPaddle(paddle);
         switch (side){
             case "TOP_LEFT":
                 this.setXSpeed(Math.abs(this.getXSpeed()) * -1);
@@ -153,7 +148,7 @@ public class Ball {
         }
     }
 
-    private String determineSideCollidedWith(Paddle paddle) {
+    private String determineSideCollidedWithPaddle(Paddle paddle) {
         //this conditional checks if collision occurred on top of paddle
         if (this.getYPos() <= paddle.getYPos()){
             //these conditionals determine with which third of the paddle did the ball collide by checking the position
@@ -176,5 +171,75 @@ public class Ball {
         }
         //only other option
         return "RIGHT";
+    }
+
+    public void collideWithBlock(Block block) {
+        String side = determineSideCollidedWithBlock(block);
+        switch (side){
+            case "TOP":
+                this.setYSpeed(Math.abs(this.getYSpeed()) * -1);
+                break;
+            case "BOTTOM":
+                this.setYSpeed(Math.abs(this.getYSpeed()));
+                break;
+            case "LEFT":
+                this.setXSpeed(Math.abs(this.getXSpeed()) * -1);
+                break;
+            case "RIGHT":
+                this.setXSpeed(Math.abs(this.getXSpeed()));
+                break;
+            case "TOP_LEFT_CORNER":
+                this.setXSpeed(Math.abs(this.getXSpeed()) * -1);
+                this.setYSpeed(Math.abs(this.getYSpeed()) * -1);
+                break;
+            case "BOTTOM_LEFT_CORNER":
+                this.setXSpeed(Math.abs(this.getXSpeed()) * -1);
+                this.setYSpeed(Math.abs(this.getYSpeed()));
+                break;
+            case "TOP_RIGHT_CORNER":
+                this.setXSpeed(Math.abs(this.getXSpeed()));
+                this.setYSpeed(Math.abs(this.getYSpeed()) * -1);
+                break;
+            case "BOTTOM_RIGHT_CORNER":
+                this.setXSpeed(Math.abs(this.getXSpeed()));
+                this.setYSpeed(Math.abs(this.getYSpeed()));
+                break;
+        }
+    }
+
+    private String determineSideCollidedWithBlock(Block block) {
+        //this conditional checks if collision occurred on either the left or right side of the block
+        if ((this.getYPos() >= block.getYPos()) && (this.getYPos() <= block.getYPos() + block.getBlockHeight())){
+            if (this.getXPos() <= block.getXPos()){
+                return "LEFT";
+            }
+            else{
+                return "RIGHT";
+            }
+        }
+        //this conditional checks if collision occurred on either the top or bottom of the block
+        if ((this.getXPos() >= block.getXPos()) && (this.getXPos() <= block.getXPos() + block.getBlockWidth())){
+            if (this.getYPos() <= block.getYPos()){
+                return "TOP";
+            }
+            else{
+                return "BOTTOM";
+            }
+        }
+        //the remaining conditionals determine with which corner of the block did the collision occur
+        if (this.getXPos() <= block.getXPos()){
+            if (this.getYPos() <= block.getYPos()){
+                return "TOP_LEFT_CORNER";
+            }
+            else{
+                return "BOTTOM_LEFT_CORNER";
+            }
+        }
+        if ((this.getXPos() >= block.getXPos() + block.getBlockWidth()) &&
+                (this.getYPos() <= block.getYPos())) {
+                return "TOP_RIGHT_CORNER";
+            }
+        //only remaining option
+        return "BOTTOM_RIGHT_CORNER";
     }
 }

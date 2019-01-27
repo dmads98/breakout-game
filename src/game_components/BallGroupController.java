@@ -39,15 +39,13 @@ public class BallGroupController {
         ballGroup.getChildren().add(ball.getBallNode());
     }
 
-
     /**
      * Method return true if ball is reset to ball, meaning life is lost in level.
      *
      * @param ball
-     * @param paddle
      * @return
      */
-    public boolean resetBall(Ball ball, Paddle paddle) {
+    public boolean resetBall(Ball ball) {
         if (ballList.size() > 1){
             ballList.remove(ball);
             ballGroup.getChildren().remove(ball.getBallNode());
@@ -57,6 +55,5 @@ public class BallGroupController {
             ball.resetBallSpeed(groupXSpeed, groupYSpeed);
             return true;
         }
-
     }
 }

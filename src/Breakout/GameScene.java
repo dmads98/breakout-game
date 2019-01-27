@@ -48,6 +48,4 @@ public interface GameScene {
      * Runs one step in animation for this scene
      */
     void step();
-
-
 }

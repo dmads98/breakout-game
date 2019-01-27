@@ -91,23 +91,11 @@ public class GameLauncher extends Application {
     }
 
     /**
-    private Scene setUpGame(int width, int height, Paint background){
-        var root = new Group();
-        var scene = new Scene(root, width, height, background);
-        var paddle = new Paddle(GAME_WIDTH/2.0 - PADDLE_WIDTH/2, GAME_HEIGHT - 50.0, PADDLE_WIDTH);
-        root.getChildren().add(paddle.node);
-
-        scene.setOnKeyPressed(e -> paddle.handleKeyInput(e.getCode()));
-        return scene;
-    }
-     **/
-
-    /**
      * Starts the program.
      *
      * @param args
      */
-    public static void main (String args[]){
+    public static void main (String[] args){
         launch(args);
     }
 }
