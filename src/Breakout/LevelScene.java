@@ -92,7 +92,7 @@ public class LevelScene implements GameScene{
         paddle = new Paddle(GAME_WIDTH/2.0 - DEFAULT_PADDLE_WIDTH/2, LEVEL_HEIGHT - 50.0, DEFAULT_PADDLE_WIDTH);
 
         //add switch statement to set different speeds per level
-        ballGroupController = new BallGroupController(190,-140.0);
+        ballGroupController = new BallGroupController(levelNumber);
         ballGroupController.initializeBall(paddle);
 
         blockMatrix = new BlockMatrix(levelNumber);
@@ -335,7 +335,7 @@ public class LevelScene implements GameScene{
                     if (block != null) {
                         if (checkShapesIntersect(ball.getBallNode(), block.getBlockNode())){
                             ball.collideWithBlock(block);
-                            blockMatrix.removeBlock(block, row, col);
+                            blockMatrix.handleBlockHit(block, row, col);
                             score += block.getPointValue();
                             updateScoreLabel();
                             rowHasBlockMissing = true;

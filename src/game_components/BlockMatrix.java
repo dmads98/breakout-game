@@ -30,7 +30,7 @@ public class BlockMatrix {
                 matrix = createLevel1Matrix();
                 break;
             case 2:
-                matrix = new Block[9][12];
+                matrix = createLevel2Matrix();
                 break;
             case 3:
                 matrix = new Block[9][12];
@@ -50,6 +50,34 @@ public class BlockMatrix {
         for (int row = 0; row < matrix.length; row++){
             if (row == 3 || row == 7){
                 yPos += Block.BLOCK_HEIGHT;
+                continue;
+            }
+            for(int col = 0; col < matrix[0].length; col++){
+                matrix[row][col] = new ColorBlock(xPos, yPos, colorIdentifier);
+                xPos += Block.BLOCK_WIDTH;
+            }
+            xPos = startXPos;
+            yPos += Block.BLOCK_HEIGHT;
+            colorIdentifier--;
+        }
+        return matrix;
+    }
+
+    private Block[][] createLevel2Matrix() {
+        int colorIdentifier = 9;
+        double xPos = startXPos;
+        double yPos = startYPos;
+        var matrix = new Block[12][12];
+        for (int row = 0; row < matrix.length; row++){
+            if (row == 3 || row == 7){
+                yPos += Block.BLOCK_HEIGHT;
+                continue;
+            }
+            if (row == matrix.length - 1){
+                for(int col = 0; col < matrix[0].length; col++){
+                    matrix[row][col] = new ToughBlock(xPos, yPos);
+                    xPos += Block.BLOCK_WIDTH;
+                }
                 continue;
             }
             for(int col = 0; col < matrix[0].length; col++){
@@ -93,9 +121,14 @@ public class BlockMatrix {
         return blockGroup;
     }
 
-    public void removeBlock(Block block, int row, int col){
-        blockGroup.getChildren().remove(block.getBlockNode());
-        matrix[row][col] = null;
-        numBlocksAlive--;
+    public void handleBlockHit(Block block, int row, int col){
+        if ((block instanceof ToughBlock) && (!((ToughBlock) block).checkIfHitOnce())) {
+            ((ToughBlock) block).setHitOnceColor();
+        }
+        else {
+            blockGroup.getChildren().remove(block.getBlockNode());
+            matrix[row][col] = null;
+            numBlocksAlive--;
+        }
     }
 }

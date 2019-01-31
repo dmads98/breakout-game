@@ -16,11 +16,27 @@ public class BallGroupController {
     private double groupXSpeed;
     private double groupYSpeed;
 
-    public BallGroupController(double xSpeed, double ySpeed){
+    public BallGroupController(int levelNumber){
         ballList = new ArrayList<>();
         ballGroup = new Group();
-        groupXSpeed = xSpeed;
-        groupYSpeed = ySpeed;
+        setGroupSpeed(levelNumber);
+    }
+
+    private void setGroupSpeed(int levelNumber) {
+        switch (levelNumber){
+            case 1:
+                groupXSpeed = 190.0;
+                groupYSpeed = -160.0;
+                break;
+            case 2:
+                groupXSpeed = 230.0;
+                groupYSpeed = -190.0;
+                break;
+            case 3:
+                break;
+            case 4:
+                break;
+        }
     }
 
     public List<Ball> getBallList() {
