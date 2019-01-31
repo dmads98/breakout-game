@@ -9,7 +9,7 @@ import javafx.scene.shape.Rectangle;
 public class Paddle {
 
     private static final double INITIAL_SPEED = 0.0;
-    private static final double PADDLE_SPEED = 250.0;
+    private static final double PADDLE_SPEED = 300.0;
     private static final double PADDLE_HEIGHT = 20.0;
     private static final double PADDLE_ARC_WIDTH = 20.0;
     private static final double PADDLE_ARC_HEIGHT = 20.0;

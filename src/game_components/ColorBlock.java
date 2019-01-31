@@ -9,7 +9,6 @@ import javafx.scene.shape.Rectangle;
  */
 public class ColorBlock extends Block{
 
-    private int pointValue;
     private Rectangle colorBlock;
 
     ColorBlock(double xPos, double yPos, int colorIdentifier){
@@ -17,10 +16,6 @@ public class ColorBlock extends Block{
         colorBlock = getBlockNode();
         pointValue = colorIdentifier;
         setColor(colorIdentifier);
-    }
-
-    public int getPointValue(){
-        return pointValue;
     }
 
     public void setColor(int colorIdentifier) {
@@ -44,10 +39,10 @@ public class ColorBlock extends Block{
                 colorBlock.setFill(Color.PURPLE);
                 break;
             case 7:
-                colorBlock.setFill(Color.TURQUOISE);
+                colorBlock.setFill(Color.DEEPSKYBLUE);
                 break;
             case 8:
-                colorBlock.setFill(Color.GREENYELLOW);
+                colorBlock.setFill(Color.SPRINGGREEN);
                 break;
             case 9:
                 colorBlock.setFill(Color.DEEPPINK);

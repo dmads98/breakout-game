@@ -46,9 +46,13 @@ public class BlockMatrix {
         int colorIdentifier = 9;
         double xPos = startXPos;
         double yPos = startYPos;
-        var matrix = new Block[9][12];
-        for (int row = 0; row < 9; row++){
-            for(int col = 0; col < 12; col++){
+        var matrix = new Block[11][12];
+        for (int row = 0; row < matrix.length; row++){
+            if (row == 3 || row == 7){
+                yPos += Block.BLOCK_HEIGHT;
+                continue;
+            }
+            for(int col = 0; col < matrix[0].length; col++){
                 matrix[row][col] = new ColorBlock(xPos, yPos, colorIdentifier);
                 xPos += Block.BLOCK_WIDTH;
             }

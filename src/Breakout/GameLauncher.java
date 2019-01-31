@@ -17,6 +17,7 @@ public class GameLauncher extends Application {
     private static final int MILLISECOND_DELAY = 1000 / FRAMES_PER_SECOND;
     public static final double SECOND_DELAY = 1.0 / FRAMES_PER_SECOND;
     private static final int TOTAL_LEVELS = 4;
+    private static final int INITIAL_LIVES = 6;
 
     private int currentSceneIndex;
     private GameScene[] breakoutScenes = new GameScene[TOTAL_LEVELS + 1];
@@ -50,6 +51,11 @@ public class GameLauncher extends Application {
         var currentSceneCode = breakoutScenes[currentSceneIndex].getSceneCode();
         switch (currentSceneCode){
             case GameScene.INITIALIZE_LEVEL:
+                if (currentSceneIndex == 1){
+                    LevelScene level = (LevelScene) breakoutScenes[currentSceneIndex];
+                    level.setLivesLeft(INITIAL_LIVES);
+                    level.setScore(0);
+                }
                 stage.setScene(breakoutScenes[currentSceneIndex].setUpScene());
                 break;
             case GameScene.CURRENT_LEVEL:
@@ -86,8 +92,20 @@ public class GameLauncher extends Application {
     }
 
     private void switchScene(int nextSceneIndex){
-        currentSceneIndex = nextSceneIndex;
-        breakoutScenes[currentSceneIndex].setSceneCode(GameScene.INITIALIZE_LEVEL);
+        if (currentSceneIndex == 0 || nextSceneIndex == 0){
+            currentSceneIndex = nextSceneIndex;
+            breakoutScenes[currentSceneIndex].setSceneCode(GameScene.INITIALIZE_LEVEL);
+        }
+        else {
+            LevelScene curLevel = (LevelScene) breakoutScenes[currentSceneIndex];
+            currentSceneIndex = nextSceneIndex;
+            breakoutScenes[currentSceneIndex].setSceneCode(GameScene.INITIALIZE_LEVEL);
+            LevelScene nextLevel = (LevelScene) breakoutScenes[currentSceneIndex];
+            int livesRemaining = curLevel.getLivesLeft();
+            nextLevel.setLivesLeft(livesRemaining);
+            int curLevelScore = curLevel.getScore();
+            nextLevel.setScore(curLevelScore);
+        }
     }
 
     /**

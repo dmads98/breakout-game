@@ -11,9 +11,10 @@ import javafx.scene.shape.Rectangle;
  */
 public abstract class Block {
     static final double BLOCK_HEIGHT = 20.0;
-    static final double BLOCK_WIDTH = LevelScene.LEVEL_WIDTH/12;
+    static final double BLOCK_WIDTH = LevelScene.GAME_WIDTH/12;
 
     private Rectangle block;
+    int pointValue;
 
     Block(double xPos, double yPos){
         block = new Rectangle();
@@ -23,6 +24,7 @@ public abstract class Block {
         block.setHeight(BLOCK_HEIGHT);
         block.setStroke(Color.BLACK);
         block.setEffect(new Lighting());
+        pointValue = 0;
     }
 
     public Rectangle getBlockNode(){
@@ -51,5 +53,9 @@ public abstract class Block {
 
     double getBlockWidth(){
         return block.getWidth();
+    }
+
+    public int getPointValue(){
+        return pointValue;
     }
 }
