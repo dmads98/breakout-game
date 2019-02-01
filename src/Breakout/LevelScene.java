@@ -1,9 +1,9 @@
 package Breakout;
 
-import game_components.Ball;
-import game_components.BallGroupController;
-import game_components.BlockMatrix;
-import game_components.Paddle;
+import game_components.*;
+import game_components.block_components.BlockMatrix;
+import game_components.block_components.PowerUp;
+import game_components.block_components.PowerUpController;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
@@ -40,6 +40,7 @@ public class LevelScene implements GameScene{
     private int levelNumber;
     private Paddle paddle;
     private BallGroupController ballGroupController;
+    private PowerUpController powerUpController;
     private BlockMatrix blockMatrix;
     private Text levelResetLabel;
     private boolean pauseGame;
@@ -96,12 +97,16 @@ public class LevelScene implements GameScene{
         ballGroupController.initializeBall(paddle);
 
         blockMatrix = new BlockMatrix(levelNumber);
-        Group blockGroup = blockMatrix.createBlockGroup();
+        blockMatrix.createBlockGroups();
+        Group blockGroup = blockMatrix.getBlockGroup();
+        powerUpController = new PowerUpController();
+        powerUpController.setPowerUpGroup(blockMatrix.getPowerUpGroup());
         createLevelResetLabel();
         Group sidePaneGroup = createSidePaneElements();
 
         ObservableList rootElements = root.getChildren();
-        rootElements.addAll(paddle.getPaddleNode(), ballGroupController.getBallGroup(), levelResetLabel, blockGroup, sidePaneGroup);
+        rootElements.addAll(paddle.getPaddleNode(), ballGroupController.getBallGroup(), levelResetLabel, blockGroup,
+                powerUpController.getPowerUpGroup(), sidePaneGroup);
 
         sceneCode = GameScene.CURRENT_LEVEL;
         pauseGame = false;
@@ -313,7 +318,29 @@ public class LevelScene implements GameScene{
                 checkAllBallPaddleCollisions();
                 checkAllBallBlockCollisions();
             }
+            managePowerUps();
             checkIfLevelIsDone();
+        }
+    }
+
+    private void managePowerUps() {
+        for (PowerUp powerUp : powerUpController.getPowerUpList()) {
+            if (powerUp.released) {
+                if (levelReset) {
+                    powerUpController.removePowerUp(powerUp);
+                    continue;
+                }
+                if (checkShapesIntersect(powerUp.getBlockNode(), paddle.getPaddleNode())){
+                    powerUp.activatePowerUp();
+                    powerUpController.removePowerUp(powerUp);
+                }
+                else{
+                    powerUp.updateLocation();
+                    if (powerUp.checkForBottomBoundaryCollision(LEVEL_HEIGHT)){
+                        powerUpController.removePowerUp(powerUp);
+                    }
+                }
+            }
         }
     }
 

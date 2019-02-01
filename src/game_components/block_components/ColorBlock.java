@@ -1,4 +1,4 @@
-package game_components;
+package game_components.block_components;
 
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -7,7 +7,7 @@ import javafx.scene.shape.Rectangle;
  *
  * @author Dhanush Madabusi
  */
-public class ColorBlock extends Block{
+public class ColorBlock extends Block {
 
     private Rectangle colorBlock;
 

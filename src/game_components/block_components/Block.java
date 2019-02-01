@@ -1,4 +1,4 @@
-package game_components;
+package game_components.block_components;
 
 import Breakout.LevelScene;
 import javafx.scene.effect.Lighting;
@@ -35,16 +35,8 @@ public abstract class Block {
         return block.getX();
     }
 
-    private void setXPos(double xPos) {
-        block.setX(xPos);
-    }
-
     double getYPos() {
         return block.getY();
-    }
-
-    private void setYPos(double yPos) {
-        block.setY(yPos);
     }
 
     double getBlockHeight(){

@@ -1,4 +1,4 @@
-package game_components;
+package game_components.block_components;
 
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;

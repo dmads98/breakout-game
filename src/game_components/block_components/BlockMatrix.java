@@ -1,4 +1,4 @@
-package game_components;
+package game_components.block_components;
 
 import javafx.scene.Group;
 
@@ -11,8 +11,9 @@ public class BlockMatrix {
     private static final double startXPos = 0.0;
     private static final double startYPos = 30.0;
 
-    private Block [][] matrix;
+    private Block[][] matrix;
     private Group blockGroup;
+    private Group powerUpGroup;
     private int numBlocksAlive;
 
 
@@ -107,25 +108,41 @@ public class BlockMatrix {
         return numBlocksAlive;
     }
 
-    public Group createBlockGroup() {
-        var blockGroup = new Group();
+    public void createBlockGroups() {
+        blockGroup = new Group();
+        powerUpGroup = new Group();
         for (int row = 0; row < this.getNumRows(); row++){
             for (int col = 0; col < this.getNumCols(); col++){
-                if (matrix[row][col] != null) {
-                    blockGroup.getChildren().add(matrix[row][col].getBlockNode());
+                var block = matrix[row][col];
+                if (block != null) {
+                    if (block instanceof PowerUp){
+                        powerUpGroup.getChildren().add(((PowerUp) block).getPowerUpGroup());
+                    }
+                    else {
+                        blockGroup.getChildren().add(block.getBlockNode());
+                    }
                     numBlocksAlive++;
                 }
             }
         }
-        this.blockGroup = blockGroup;
+    }
+
+    public Group getBlockGroup(){
         return blockGroup;
+    }
+
+    public Group getPowerUpGroup(){
+        return powerUpGroup;
     }
 
     public void handleBlockHit(Block block, int row, int col){
         if ((block instanceof ToughBlock) && (!((ToughBlock) block).checkIfHitOnce())) {
             ((ToughBlock) block).setHitOnceColor();
         }
-        else {
+        else{
+            if (block instanceof PowerUp){
+                ((PowerUp) block).releasePowerUp();
+            }
             blockGroup.getChildren().remove(block.getBlockNode());
             matrix[row][col] = null;
             numBlocksAlive--;

@@ -1,6 +1,7 @@
 package game_components;
 
 import Breakout.GameLauncher;
+import game_components.block_components.Block;
 import javafx.scene.effect.Lighting;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
