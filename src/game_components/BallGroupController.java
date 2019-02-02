@@ -2,22 +2,20 @@ package game_components;
 
 import javafx.scene.Group;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  *
  * @author Dhanush Madabusi
  */
 public class BallGroupController {
 
-    private List<Ball> ballList;
+    private Ball[] ballArray;
     private Group ballGroup;
     private double groupXSpeed;
     private double groupYSpeed;
+    private int ballsAlive = 0;
 
-    public BallGroupController(int levelNumber){
-        ballList = new ArrayList<>();
+    public BallGroupController(int levelNumber, int numBallsPossible){
+        ballArray = new Ball[numBallsPossible];
         ballGroup = new Group();
         setGroupSpeed(levelNumber);
     }
@@ -39,19 +37,29 @@ public class BallGroupController {
         }
     }
 
-    public List<Ball> getBallList() {
-        return ballList;
+    public Ball[] getBallArray() {
+        return ballArray;
     }
 
     public Group getBallGroup(){
         return ballGroup;
     }
 
+    public int getBallsAlive(){
+        return ballsAlive;
+    }
+
     public void initializeBall(Paddle paddle) {
         var ballXPos = paddle.getXPos() + paddle.getWidth()/2;
         var ballYPos = paddle.getYPos() - Ball.RADIUS;
         var ball = new Ball(ballXPos, ballYPos, groupXSpeed, groupYSpeed);
-        ballList.add(ball);
+        for (int index = 0; index < ballArray.length; index++){
+            if (ballArray[index] == null){
+                ballArray[index] = ball;
+                ballsAlive++;
+                break;
+            }
+        }
         ballGroup.getChildren().add(ball.getBallNode());
     }
 
@@ -61,15 +69,10 @@ public class BallGroupController {
      * @param ball
      * @return
      */
-    public boolean resetBall(Ball ball) {
-        if (ballList.size() > 1){
-            ballList.remove(ball);
-            ballGroup.getChildren().remove(ball.getBallNode());
-            return false;
-        }
-        else{
-            ball.resetBallSpeed(groupXSpeed, groupYSpeed);
-            return true;
-        }
+    public boolean resetBall(Ball ball, int index) {
+        ballArray[index] = null;
+        ballsAlive--;
+        ballGroup.getChildren().remove(ball.getBallNode());
+        return ballsAlive == 0;
     }
 }

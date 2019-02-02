@@ -6,26 +6,31 @@ import javafx.scene.effect.Lighting;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
-public abstract class PowerUp extends ColorBlock {
+public class PowerUp extends ColorBlock {
 
-    private static final double POWERUP_ARC_WIDTH = 20.0;
-    private static final double POWERUP_ARC_HEIGHT = 20.0;
-    private static final Color POWERUP_COLOR = Color.WHITESMOKE;
+    private static final double POWERUP_ARC_WIDTH = 30.0;
+    private static final double POWERUP_ARC_HEIGHT = 50.0;
+    private static final Color POWERUP_COLOR = Color.WHITE;
+    private static final double ySpeed = 80.0;
+    static final int numPowerUps = 6;
 
     private Rectangle powerUpIcon;
     private Text powerUpLabel;
     private Group powerUpGroup;
+    private String powerUpIdentifier;
     public boolean released = false;
-    private static final double ySpeed = 100.0;
 
-    public PowerUp(double xPos, double yPos, int colorIdentifier){
+
+    PowerUp(double xPos, double yPos, int colorIdentifier, int powerUpCode){
         super(xPos, yPos, colorIdentifier);
         createPowerUpIcon(xPos, yPos);
         powerUpIcon.setVisible(false);
         createPowerUpLabel();
         createPowerUpGroup();
+        setPowerUpIdentifier(powerUpCode);
     }
 
     private void createPowerUpGroup() {
@@ -37,13 +42,42 @@ public abstract class PowerUp extends ColorBlock {
         return powerUpGroup;
     }
 
+    public String getPowerUpIdentifier(){
+        return powerUpIdentifier;
+    }
+
+    private void setPowerUpIdentifier(int powerUpCode){
+        switch (powerUpCode){
+            case 1:
+                powerUpIdentifier = "Bonus Points";
+                break;
+            case 2:
+                powerUpIdentifier = "Double Points";
+                break;
+            case 3:
+                powerUpIdentifier = "Extra Life";
+                break;
+            case 4:
+                powerUpIdentifier = "Extra Ball";
+                break;
+            case 5:
+                powerUpIdentifier = "Stretched Paddle";
+                break;
+            case 6:
+                powerUpIdentifier = "Laser Paddle";
+                break;
+
+        }
+    }
+
     private void createPowerUpLabel() {
         powerUpLabel = new Text();
-        powerUpLabel.setFont(Font.font("courier", 10));
+        powerUpLabel.setFont(Font.font("courier", FontWeight.BOLD, 20));
         powerUpLabel.setText("P");
-        //var textWidth = powerUpLabel.getLayoutBounds().getWidth();
-        powerUpLabel.setX(getXPos() + getBlockWidth()/2);
-        powerUpLabel.setY(getYPos() + getBlockHeight()/2);
+        var textWidth = powerUpLabel.getLayoutBounds().getWidth();
+        var textHeight = powerUpLabel.getLayoutBounds().getHeight();
+        powerUpLabel.setX(getXPos() + getBlockWidth()/2 - textWidth/2);
+        powerUpLabel.setY(getYPos() + getBlockHeight()/2 + textHeight/2 - 5.0);
         powerUpLabel.setVisible(false);
     }
 
@@ -56,8 +90,13 @@ public abstract class PowerUp extends ColorBlock {
         powerUpIcon.setArcWidth(POWERUP_ARC_WIDTH);
         powerUpIcon.setArcHeight(POWERUP_ARC_HEIGHT);
         powerUpIcon.setFill(POWERUP_COLOR);
-        powerUpIcon.setStroke(Color.BLACK);
+        powerUpIcon.setStroke(Color.RED);
+        powerUpIcon.setStrokeWidth(2);
         powerUpIcon.setEffect(new Lighting());
+    }
+
+    public Rectangle getPowerUpIcon(){
+        return powerUpIcon;
     }
 
     void releasePowerUp(){
@@ -66,8 +105,6 @@ public abstract class PowerUp extends ColorBlock {
         powerUpIcon.setVisible(true);
         powerUpGroup.getChildren().remove(getBlockNode());
     }
-
-    public abstract void activatePowerUp();
 
     public void updateLocation() {
         powerUpIcon.setY(powerUpIcon.getY() + ySpeed * GameLauncher.SECOND_DELAY);

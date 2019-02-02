@@ -31,9 +31,12 @@ public class PowerUpController {
         return powerUpList;
     }
 
+    public void setPowerUpList(List<PowerUp> powerUpList){
+        this.powerUpList = powerUpList;
+    }
 
-    public void removePowerUp(PowerUp powerUp) {
-        powerUpList.remove(powerUp);
+    public void removePowerUp(PowerUp powerUp, int index) {
         powerUpGroup.getChildren().remove(powerUp.getPowerUpGroup());
+        powerUpList.set(index, null);
     }
 }

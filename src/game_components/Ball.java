@@ -9,7 +9,7 @@ import javafx.scene.shape.Circle;
 public class Ball {
 
     static final double RADIUS = 8.0;
-    public boolean resetBall = false;
+    private boolean resetBall = false;
 
     private Circle ball;
     private double xSpeed;
@@ -71,6 +71,10 @@ public class Ball {
         return ball.getRadius();
     }
 
+    public boolean getResetBall(){
+        return resetBall;
+    }
+
     public void updateLocation(double levelWidth, double levelHeight, boolean levelReset, Paddle paddle) {
         if (!levelReset) {
             updateCoordinates();
@@ -92,21 +96,18 @@ public class Ball {
     }
 
     private void checkBoundaryCollisions(double levelWidth, double levelHeight){
-        if (leftBoundaryCollision() || rightBoundaryCollision(levelWidth)){
-            this.setXSpeed(this.getXSpeed() * -1);
+        if (leftBoundaryCollision()){
+            this.setXSpeed(Math.abs(this.getXSpeed()));
+        }
+        if (rightBoundaryCollision(levelWidth)){
+            this.setXSpeed(Math.abs(this.getXSpeed()) * -1);
         }
         if (topBoundaryCollision()){
-            this.setYSpeed(this.getYSpeed() * -1);
+            this.setYSpeed(Math.abs(this.getYSpeed()));
         }
         if (bottomBoundaryCollision(levelHeight)){
             resetBall = true;
         }
-    }
-
-    void resetBallSpeed(double resetXSpeed, double resetYSpeed){
-        this.setXSpeed(resetXSpeed);
-        this.setYSpeed(resetYSpeed);
-        this.resetBall = false;
     }
 
     private boolean leftBoundaryCollision() {

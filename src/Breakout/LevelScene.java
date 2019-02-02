@@ -34,6 +34,7 @@ public class LevelScene implements GameScene{
     private static final double DEFAULT_PADDLE_WIDTH = 100.0;
     private static final double BORDER_WIDTH = 5.0;
     private static final int MAX_LIVES_POSSIBLE = 9;
+    private static final int DEFAULT_LIVES = 6;
 
     private boolean levelReset;
     private int sceneCode;
@@ -92,15 +93,16 @@ public class LevelScene implements GameScene{
 
         paddle = new Paddle(GAME_WIDTH/2.0 - DEFAULT_PADDLE_WIDTH/2, LEVEL_HEIGHT - 50.0, DEFAULT_PADDLE_WIDTH);
 
-        //add switch statement to set different speeds per level
-        ballGroupController = new BallGroupController(levelNumber);
-        ballGroupController.initializeBall(paddle);
-
         blockMatrix = new BlockMatrix(levelNumber);
-        blockMatrix.createBlockGroups();
+        blockMatrix.createBlockGroupsAndList();
         Group blockGroup = blockMatrix.getBlockGroup();
         powerUpController = new PowerUpController();
         powerUpController.setPowerUpGroup(blockMatrix.getPowerUpGroup());
+        powerUpController.setPowerUpList(blockMatrix.getPowerUpList());
+
+        ballGroupController = new BallGroupController(levelNumber, blockMatrix.numBallsPossible);
+        ballGroupController.initializeBall(paddle);
+
         createLevelResetLabel();
         Group sidePaneGroup = createSidePaneElements();
 
@@ -279,30 +281,30 @@ public class LevelScene implements GameScene{
     }
 
     private void handleCheatKeys(KeyCode code) {
+        boolean scoreAndLivesReset = true;
         if (code == KeyCode.DIGIT1) {
-            score = 0;
             setSceneCode(GameScene.CHEAT_LEVEL_1);
         } else if (code == KeyCode.DIGIT2) {
-            score = 0;
             setSceneCode(GameScene.CHEAT_LEVEL_2);
         } else if (code == KeyCode.DIGIT3) {
-            score = 0;
             setSceneCode(GameScene.CHEAT_LEVEL_3);
         } else if (code == KeyCode.DIGIT4) {
-            score = 0;
             setSceneCode(GameScene.CHEAT_LEVEL_4);
         } else if (code == KeyCode.Q) {
-            score = 0;
             setSceneCode(GameScene.LEVEL_QUIT);
         } else if (code == KeyCode.A){
             if (livesLeft < MAX_LIVES_POSSIBLE) {
                 livesLeft++;
                 updateLivesLabel();
             }
-        } else {
+            scoreAndLivesReset = false;
+        } else{
             return;
         }
-        levelReset = true;
+        if (scoreAndLivesReset){
+            score = 0;
+            livesLeft = DEFAULT_LIVES;
+        }
     }
 
     private void keyBoardReleaseEvent(KeyCode code) {
@@ -324,29 +326,59 @@ public class LevelScene implements GameScene{
     }
 
     private void managePowerUps() {
-        for (PowerUp powerUp : powerUpController.getPowerUpList()) {
+        var pList = powerUpController.getPowerUpList();
+        for (int index = 0; index < pList.size(); index++) {
+            var powerUp = pList.get(index);
+            if (powerUp == null){
+                continue;
+            }
             if (powerUp.released) {
-                if (levelReset) {
-                    powerUpController.removePowerUp(powerUp);
+                if (levelReset){
+                    powerUpController.removePowerUp(powerUp, index);
                     continue;
                 }
-                if (checkShapesIntersect(powerUp.getBlockNode(), paddle.getPaddleNode())){
-                    powerUp.activatePowerUp();
-                    powerUpController.removePowerUp(powerUp);
+                if (checkShapesIntersect(powerUp.getPowerUpIcon(), paddle.getPaddleNode())){
+                    activatePowerUp(powerUp.getPowerUpIdentifier());
+                    powerUpController.removePowerUp(powerUp, index);
                 }
                 else{
                     powerUp.updateLocation();
                     if (powerUp.checkForBottomBoundaryCollision(LEVEL_HEIGHT)){
-                        powerUpController.removePowerUp(powerUp);
+                        powerUpController.removePowerUp(powerUp, index);
                     }
                 }
             }
         }
     }
 
+    private void activatePowerUp(String powerUpIdentifier){
+        switch(powerUpIdentifier){
+            case "Extra Life":
+                livesLeft++;
+                updateLivesLabel();
+                break;
+            case "Bonus Points":
+                score += 50;
+                updateScoreLabel();
+                break;
+            case "Extra Ball":
+                ballGroupController.initializeBall(paddle);
+                break;
+        }
+    }
+
     private void checkIfLevelIsDone() {
         if (blockMatrix.getNumBlocksAlive() == 0){
-            setSceneCode(GameScene.LEVEL_COMPLETE);
+            boolean allPowerUpsNull = true;
+            for (PowerUp powerUp: powerUpController.getPowerUpList()){
+                if (powerUp != null){
+                    allPowerUpsNull = false;
+                    break;
+                }
+            }
+            if (allPowerUpsNull) {
+                setSceneCode(GameScene.LEVEL_COMPLETE);
+            }
         }
         if (livesLeft == 0){
             setSceneCode(GameScene.LEVEL_LOST);
@@ -354,7 +386,12 @@ public class LevelScene implements GameScene{
     }
 
     private void checkAllBallBlockCollisions() {
-        for (Ball ball: ballGroupController.getBallList()){
+        int count = 0;
+        for (Ball ball: ballGroupController.getBallArray()){
+            if (ball == null){
+                continue;
+            }
+            count++;
             for (int row = blockMatrix.getNumRows() - 1; row >= 0; row--){
                 boolean rowHasBlockMissing = false;
                 for (int col = 0; col < blockMatrix.getNumCols(); col++){
@@ -376,28 +413,50 @@ public class LevelScene implements GameScene{
                     return;
                 }
             }
+            if (count == ballGroupController.getBallsAlive()){
+                break;
+            }
         }
     }
 
     private void checkAllBallPaddleCollisions() {
-        for (Ball ball: ballGroupController.getBallList()){
+        int count = 0;
+        var ballArray = ballGroupController.getBallArray();
+        for (Ball ball : ballArray){
+            if (ball == null){
+                continue;
+            }
+            count++;
             if (checkShapesIntersect(ball.getBallNode(), paddle.getPaddleNode())){
                 ball.collideWithPaddle(paddle);
+            }
+            if (count == ballGroupController.getBallsAlive()){
+                break;
             }
         }
     }
 
     private void updateBallLocations() {
-        var ballList = ballGroupController.getBallList();
-        for (Ball ball: ballList){
+        var ballArray = ballGroupController.getBallArray();
+        int count = 0;
+        for (int index = 0; index < ballArray.length; index++){
+            var ball = ballArray[index];
+            if (ball == null){
+                continue;
+            }
+            count++;
             ball.updateLocation(GAME_WIDTH, LEVEL_HEIGHT, levelReset, paddle);
-            if (ball.resetBall){
-                levelReset = ballGroupController.resetBall(ball);
-                livesLeft--;
-                updateLivesLabel();
+            if (ball.getResetBall()){
+                levelReset = ballGroupController.resetBall(ball, index);
                 if (levelReset){
+                    ballGroupController.initializeBall(paddle);
+                    livesLeft--;
+                    updateLivesLabel();
                     levelResetLabel.setVisible(true);
                 }
+            }
+            if (count == ballGroupController.getBallsAlive()){
+                break;
             }
         }
     }

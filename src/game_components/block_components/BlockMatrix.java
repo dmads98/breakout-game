@@ -2,6 +2,10 @@ package game_components.block_components;
 
 import javafx.scene.Group;
 
+import java.util.ArrayList;
+import java.util.List;
+
+
 /**
  *
  * @author Dhanush Madabusi
@@ -14,7 +18,9 @@ public class BlockMatrix {
     private Block[][] matrix;
     private Group blockGroup;
     private Group powerUpGroup;
+    private List<PowerUp> powerUpList;
     private int numBlocksAlive;
+    public int numBallsPossible = 1;
 
 
     public BlockMatrix(int levelNumber){
@@ -82,7 +88,17 @@ public class BlockMatrix {
                 continue;
             }
             for(int col = 0; col < matrix[0].length; col++){
-                matrix[row][col] = new ColorBlock(xPos, yPos, colorIdentifier);
+                if (Math.random() <= 0.1){
+                    int powerUpIdentifier = generateRandomPowerUp();
+                    if (powerUpIdentifier == 4){
+                        numBallsPossible++;
+                    }
+                    matrix[row][col] = new PowerUp(xPos, yPos, colorIdentifier, powerUpIdentifier);
+                    System.out.println(row + " " + col);
+                }
+                else{
+                    matrix[row][col] = new ColorBlock(xPos, yPos, colorIdentifier);
+                }
                 xPos += Block.BLOCK_WIDTH;
             }
             xPos = startXPos;
@@ -90,6 +106,11 @@ public class BlockMatrix {
             colorIdentifier--;
         }
         return matrix;
+    }
+
+
+    private int generateRandomPowerUp(){
+        return (int)(Math.random() * PowerUp.numPowerUps) + 1;
     }
 
     public int getNumCols(){
@@ -108,15 +129,17 @@ public class BlockMatrix {
         return numBlocksAlive;
     }
 
-    public void createBlockGroups() {
+    public void createBlockGroupsAndList() {
         blockGroup = new Group();
         powerUpGroup = new Group();
+        powerUpList = new ArrayList<>();
         for (int row = 0; row < this.getNumRows(); row++){
             for (int col = 0; col < this.getNumCols(); col++){
                 var block = matrix[row][col];
                 if (block != null) {
                     if (block instanceof PowerUp){
                         powerUpGroup.getChildren().add(((PowerUp) block).getPowerUpGroup());
+                        powerUpList.add((PowerUp)block);
                     }
                     else {
                         blockGroup.getChildren().add(block.getBlockNode());
@@ -135,6 +158,10 @@ public class BlockMatrix {
         return powerUpGroup;
     }
 
+    public List<PowerUp> getPowerUpList(){
+        return powerUpList;
+    }
+
     public void handleBlockHit(Block block, int row, int col){
         if ((block instanceof ToughBlock) && (!((ToughBlock) block).checkIfHitOnce())) {
             ((ToughBlock) block).setHitOnceColor();
@@ -142,6 +169,7 @@ public class BlockMatrix {
         else{
             if (block instanceof PowerUp){
                 ((PowerUp) block).releasePowerUp();
+                System.out.println(((PowerUp) block).getPowerUpIdentifier());
             }
             blockGroup.getChildren().remove(block.getBlockNode());
             matrix[row][col] = null;

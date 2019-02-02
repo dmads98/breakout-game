@@ -92,20 +92,16 @@ public class GameLauncher extends Application {
     }
 
     private void switchScene(int nextSceneIndex){
-        if (currentSceneIndex == 0 || nextSceneIndex == 0){
-            currentSceneIndex = nextSceneIndex;
-            breakoutScenes[currentSceneIndex].setSceneCode(GameScene.INITIALIZE_LEVEL);
-        }
-        else {
+        breakoutScenes[nextSceneIndex].setSceneCode(GameScene.INITIALIZE_LEVEL);
+        if (currentSceneIndex != 0 && nextSceneIndex != 0) {
             LevelScene curLevel = (LevelScene) breakoutScenes[currentSceneIndex];
-            currentSceneIndex = nextSceneIndex;
-            breakoutScenes[currentSceneIndex].setSceneCode(GameScene.INITIALIZE_LEVEL);
-            LevelScene nextLevel = (LevelScene) breakoutScenes[currentSceneIndex];
+            LevelScene nextLevel = (LevelScene) breakoutScenes[nextSceneIndex];
             int livesRemaining = curLevel.getLivesLeft();
             nextLevel.setLivesLeft(livesRemaining);
             int curLevelScore = curLevel.getScore();
             nextLevel.setScore(curLevelScore);
         }
+        currentSceneIndex = nextSceneIndex;
     }
 
     /**

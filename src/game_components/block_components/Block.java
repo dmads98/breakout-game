@@ -31,19 +31,19 @@ public abstract class Block {
         return block;
     }
 
-    double getXPos() {
+    public double getXPos() {
         return block.getX();
     }
 
-    double getYPos() {
+    public double getYPos() {
         return block.getY();
     }
 
-    double getBlockHeight(){
+    public double getBlockHeight(){
         return  block.getHeight();
     }
 
-    double getBlockWidth(){
+    public double getBlockWidth(){
         return block.getWidth();
     }
 
