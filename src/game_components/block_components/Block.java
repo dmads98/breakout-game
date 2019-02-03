@@ -11,7 +11,7 @@ import javafx.scene.shape.Rectangle;
  */
 public abstract class Block {
     static final double BLOCK_HEIGHT = 20.0;
-    static final double BLOCK_WIDTH = LevelScene.GAME_WIDTH/12;
+    public static final double BLOCK_WIDTH = LevelScene.GAME_WIDTH/12;
 
     private Rectangle block;
     int pointValue;

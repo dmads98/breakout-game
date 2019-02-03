@@ -42,19 +42,19 @@ public class Paddle {
         return paddleSpeed;
     }
 
-    double getXPos() {
+    public double getXPos() {
         return paddle.getX();
     }
 
-    private void setXPos(double xPos) {
+    public void setXPos(double xPos) {
         paddle.setX(xPos);
     }
 
-    double getYPos() {
+    public double getYPos() {
         return paddle.getY();
     }
 
-    double getWidth() {
+    public double getWidth() {
         return paddle.getWidth();
     }
 

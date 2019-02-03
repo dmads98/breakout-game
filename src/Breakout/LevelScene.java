@@ -1,12 +1,14 @@
 package Breakout;
 
 import game_components.*;
+import game_components.block_components.Block;
 import game_components.block_components.BlockMatrix;
 import game_components.block_components.PowerUp;
 import game_components.block_components.PowerUpController;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.effect.DropShadow;
@@ -14,10 +16,13 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+
+import java.util.Iterator;
 
 /**
  * This class implements the GameScene interface and sets up the structure for creating the scene for each level in the
@@ -54,6 +59,10 @@ public class LevelScene implements GameScene{
     private int framesPerSecond;
     private boolean stretchedPaddle = false;
     private int stretchedPaddleTimeCounter = 0;
+    private boolean laserPaddle = false;
+    private int laserPaddleTimeCounter = 0;
+    private int laserShootTimeCounter = 0;
+    private Group bulletGroup = new Group();
 
     /**
      * The constructor sets the levelNumber to parameter and sets the sceneCode to INITIALIZE_LEVEL.
@@ -112,9 +121,14 @@ public class LevelScene implements GameScene{
         createLevelResetLabel();
         Group sidePaneGroup = createSidePaneElements();
 
+        var bullet = new LaserBullet(50.0, 350.0);
+        bullet.getBulletNode().setVisible(false);
+
+        bulletGroup.getChildren().add(bullet.getBulletNode());
+
         ObservableList rootElements = root.getChildren();
         rootElements.addAll(paddle.getPaddleNode(), ballGroupController.getBallGroup(), levelResetLabel, blockGroup,
-                powerUpController.getPowerUpGroup(), sidePaneGroup);
+                powerUpController.getPowerUpGroup(), sidePaneGroup, bulletGroup);
 
         sceneCode = GameScene.CURRENT_LEVEL;
         pauseGame = false;
@@ -333,27 +347,109 @@ public class LevelScene implements GameScene{
     }
 
     private void handleTimedPowerUps() {
-        if (doublePoints){
-            if (levelReset){
-                doublePoints = false;
+        handleDoublePoints();
+        handleStretchedPaddle();
+        handleLaserPaddle();
+    }
+
+    private void handleLaserPaddle() {
+        if (laserPaddle){
+            System.out.println("laser paddle");
+            if (laserShootTimeCounter == framesPerSecond){
+                shootLasers();
+                laserShootTimeCounter = 0;
             }
-            if (doublePointsTimeCounter == framesPerSecond*TIMED_POWERUP_LENGTH){
-                doublePoints = false;
+            else{
+                laserShootTimeCounter++;
             }
-            doublePointsTimeCounter++;
+            updateBulletLocations();
+            if (levelReset || laserPaddleTimeCounter == framesPerSecond * TIMED_POWERUP_LENGTH){
+                laserPaddle = false;
+                bulletGroup = new Group();
+            }
+            else {
+                laserPaddleTimeCounter++;
+            }
         }
+    }
+
+    private void handleStretchedPaddle() {
         if (stretchedPaddle){
-            if (levelReset){
-                stretchedPaddle = false;
-            }
-            if (stretchedPaddleTimeCounter == framesPerSecond*TIMED_POWERUP_LENGTH){
+            if (levelReset || stretchedPaddleTimeCounter == framesPerSecond * TIMED_POWERUP_LENGTH){
                 paddle.setWidth(Paddle.DEFAULT_PADDLE_WIDTH);
                 stretchedPaddle = false;
             }
-            stretchedPaddleTimeCounter++;
-
+            else {
+                stretchedPaddleTimeCounter++;
+            }
         }
+    }
 
+    private void handleDoublePoints() {
+        if (doublePoints){
+            if (levelReset || doublePointsTimeCounter == framesPerSecond * TIMED_POWERUP_LENGTH){
+                doublePoints = false;
+            }
+            else {
+                doublePointsTimeCounter++;
+            }
+        }
+    }
+
+    private void updateBulletLocations() {
+        ObservableList<Node> bulletList = bulletGroup.getChildren();
+        //System.out.println(bulletList.size());
+        Iterator<Node> i = bulletList.iterator();
+        while (i.hasNext()) {
+            Rectangle bullet = (Rectangle) i.next();
+            int blockCol = (int)(bullet.getX()/Block.BLOCK_WIDTH);
+            bullet.setY(bullet.getY() - LaserBullet.BULLET_SPEED * GameLauncher.SECOND_DELAY);
+            if (bullet.getY() <= 0){
+                bullet.setVisible(false);
+                //i.remove();
+                continue;
+            }
+            for (int row = blockMatrix.getNumRows() - 1; row >= 0; row--){
+                boolean rowHasBlockMissing = false;
+                for (int col = blockCol; col <= blockCol + 1; col++){
+                    if (col >= blockMatrix.getNumCols()){
+                        break;
+                    }
+                    var block = blockMatrix.getMatrix()[row][col];
+                    if (block != null) {
+                        if (checkShapesIntersect(bullet, block.getBlockNode())){
+                            //System.out.println("block Hit");
+                            bullet.setVisible(false);
+                            //i.remove();
+                            blockMatrix.handleBlockHit(block, row, col);
+                            if (doublePoints) {
+                                score += (block.getPointValue() * 2);
+                            }
+                            else {
+                                score += block.getPointValue();
+                            }
+                            updateScoreLabel();
+                            rowHasBlockMissing = false;
+                        }
+                    }
+                    else{
+                        rowHasBlockMissing = true;
+                    }
+                }
+                if (!rowHasBlockMissing){
+                    break;
+                }
+            }
+        }
+    }
+
+    private void shootLasers() {
+        var paddleXPos = paddle.getXPos();
+        var paddleYPos = paddle.getYPos();
+        LaserBullet leftBullet = new LaserBullet(paddleXPos + 15, paddleYPos - LaserBullet.BULLET_HEIGHT);
+        LaserBullet rightBullet = new LaserBullet(paddleXPos + paddle.getWidth() - LaserBullet.BULLET_WIDTH - 15,
+                paddleYPos - LaserBullet.BULLET_HEIGHT);
+        bulletGroup.getChildren().addAll(leftBullet.getBulletNode(), rightBullet.getBulletNode());
     }
 
     private void managePowerUps() {
@@ -400,10 +496,16 @@ public class LevelScene implements GameScene{
                 doublePointsTimeCounter = 0;
                 break;
             case "Stretched Paddle":
+                if (paddle.getXPos() + Paddle.STRECHED_PADDLE_WIDTH > GAME_WIDTH){
+                    paddle.setXPos(GAME_WIDTH - Paddle.STRECHED_PADDLE_WIDTH);
+                }
                 paddle.setWidth(Paddle.STRECHED_PADDLE_WIDTH);
                 stretchedPaddle = true;
                 stretchedPaddleTimeCounter = 0;
-
+            case "Laser Paddle":
+                laserPaddle = true;
+                laserPaddleTimeCounter = 0;
+                laserShootTimeCounter = 0;
         }
     }
 
@@ -426,8 +528,10 @@ public class LevelScene implements GameScene{
     }
 
     private void checkAllBallBlockCollisions() {
+        var ballArray = ballGroupController.getBallArray();
         int count = 0;
-        for (Ball ball: ballGroupController.getBallArray()){
+        for (int index = 0; index < ballArray.length; index++){
+            var ball = ballArray[index];
             if (ball == null){
                 continue;
             }
@@ -455,7 +559,7 @@ public class LevelScene implements GameScene{
                     }
                 }
                 if (!rowHasBlockMissing){
-                    return;
+                    break;
                 }
             }
             if (count == ballGroupController.getBallsAlive()){
