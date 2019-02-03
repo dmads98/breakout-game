@@ -6,6 +6,15 @@ import javafx.scene.effect.Lighting;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
+/**
+ * This class is responsible constructing the Ball objects in the Game. It contains all basic getter and setter methods
+ * for the various properties of the Ball object. It also handles updating the location of the Ball for each frame, as
+ * well as checks and handles collisions with the paddle and blocks in a level. This class has very few dependencies. It
+ * uses the GameLauncher.SECOND_DELAY to update ball location as well as imports the Block class. The set of Ball objects
+ * are maintained by the BallGroupController class.
+ *
+ * @author Dhanush Madabusi
+ */
 public class Ball {
 
     static final double RADIUS = 8.0;
@@ -31,6 +40,12 @@ public class Ball {
 
     }
 
+    /**
+     * To add the Ball object to its respective Group object in the BallGroupController and for checking object collision,
+     * we need the Ball's private Circle Node object.
+     *
+     * @return Circle Node for the Ball object
+     */
     public Circle getBallNode(){
         return ball;
     }
@@ -71,10 +86,26 @@ public class Ball {
         return ball.getRadius();
     }
 
+    /**
+     * This method returns the resetBall boolean and is called in updateBallLocations() in LevelScene. If this Ball
+     * object goes out of play, the BallGroupController sets this Ball object to null and determines whether the level
+     * must be reset or not.
+     *
+     * @return whether the BallGroupController must reset the ball or not
+     */
     public boolean getResetBall(){
         return resetBall;
     }
 
+    /**
+     * This method updates the location of the Ball based and checks for boundary collisions. If the level is reset,
+     * the ball will stick to the center of the paddle until game play begins again.
+     *
+     * @param levelWidth the width of the game play area
+     * @param levelHeight the height of the game play area
+     * @param levelReset whether or not the level has been reset or not
+     * @param paddle the paddle for which the ball should be reset to if levelReset = true
+     */
     public void updateLocation(double levelWidth, double levelHeight, boolean levelReset, Paddle paddle) {
         if (!levelReset) {
             updateCoordinates();
@@ -126,6 +157,12 @@ public class Ball {
         return (this.getYPos() - this.getRadius()) > levelHeight;
     }
 
+    /**
+     * This method determines which changes the ball's x- and y- velocity based on which side of the paddle it collided
+     * with.
+     *
+     * @param paddle the Paddle object for which to handle collisions
+     */
     public void collideWithPaddle(Paddle paddle) {
         String side = determineSideCollidedWithPaddle(paddle);
         switch (side){
@@ -175,6 +212,12 @@ public class Ball {
         return "RIGHT";
     }
 
+    /**
+     * This method determines which changes the ball's x- and y- velocity based on which side of the block it collided
+     * with.
+     *
+     * @param block the Block object for which to handle collisions
+     */
     public void collideWithBlock(Block block) {
         String side = determineSideCollidedWithBlock(block);
         switch (side){
