@@ -31,10 +31,10 @@ public class LevelScene implements GameScene{
     public static final double GAME_WIDTH = 500.0;
     private static final double PANE_WIDTH = 200.0;
     private static final double LEVEL_HEIGHT = 500.0;
-    private static final double DEFAULT_PADDLE_WIDTH = 100.0;
     private static final double BORDER_WIDTH = 5.0;
     private static final int MAX_LIVES_POSSIBLE = 9;
     private static final int DEFAULT_LIVES = 6;
+    private static final int TIMED_POWERUP_LENGTH = 15;
 
     private boolean levelReset;
     private int sceneCode;
@@ -49,15 +49,21 @@ public class LevelScene implements GameScene{
     private Text livesLabel;
     private Text scoreLabel;
     private int score;
+    private int doublePointsTimeCounter = 0;
+    private boolean doublePoints = false;
+    private int framesPerSecond;
+    private boolean stretchedPaddle = false;
+    private int stretchedPaddleTimeCounter = 0;
 
     /**
      * The constructor sets the levelNumber to parameter and sets the sceneCode to INITIALIZE_LEVEL.
      * EXPLAIN!
      * @param levelNumber the number of this level
      */
-    LevelScene(int levelNumber){
+    LevelScene(int levelNumber, int framesPerSecond){
         this.levelNumber = levelNumber;
         sceneCode = GameScene.INITIALIZE_LEVEL;
+        this.framesPerSecond = framesPerSecond;
     }
 
     @Override
@@ -91,7 +97,7 @@ public class LevelScene implements GameScene{
         var root = new Group();
         var scene = new Scene(root, GAME_WIDTH + PANE_WIDTH, LEVEL_HEIGHT, LEVEL_BACKGROUND);
 
-        paddle = new Paddle(GAME_WIDTH/2.0 - DEFAULT_PADDLE_WIDTH/2, LEVEL_HEIGHT - 50.0, DEFAULT_PADDLE_WIDTH);
+        paddle = new Paddle(GAME_WIDTH/2.0 - Paddle.DEFAULT_PADDLE_WIDTH/2, LEVEL_HEIGHT - 50.0);
 
         blockMatrix = new BlockMatrix(levelNumber);
         blockMatrix.createBlockGroupsAndList();
@@ -314,6 +320,7 @@ public class LevelScene implements GameScene{
     @Override
     public void step() {
         if (!pauseGame) {
+            handleTimedPowerUps();
             paddle.updateLocation(GAME_WIDTH, LEVEL_HEIGHT);
             updateBallLocations();
             if (!levelReset) {
@@ -323,6 +330,30 @@ public class LevelScene implements GameScene{
             managePowerUps();
             checkIfLevelIsDone();
         }
+    }
+
+    private void handleTimedPowerUps() {
+        if (doublePoints){
+            if (levelReset){
+                doublePoints = false;
+            }
+            if (doublePointsTimeCounter == framesPerSecond*TIMED_POWERUP_LENGTH){
+                doublePoints = false;
+            }
+            doublePointsTimeCounter++;
+        }
+        if (stretchedPaddle){
+            if (levelReset){
+                stretchedPaddle = false;
+            }
+            if (stretchedPaddleTimeCounter == framesPerSecond*TIMED_POWERUP_LENGTH){
+                paddle.setWidth(Paddle.DEFAULT_PADDLE_WIDTH);
+                stretchedPaddle = false;
+            }
+            stretchedPaddleTimeCounter++;
+
+        }
+
     }
 
     private void managePowerUps() {
@@ -364,6 +395,15 @@ public class LevelScene implements GameScene{
             case "Extra Ball":
                 ballGroupController.initializeBall(paddle);
                 break;
+            case "Double Points":
+                doublePoints = true;
+                doublePointsTimeCounter = 0;
+                break;
+            case "Stretched Paddle":
+                paddle.setWidth(Paddle.STRECHED_PADDLE_WIDTH);
+                stretchedPaddle = true;
+                stretchedPaddleTimeCounter = 0;
+
         }
     }
 
@@ -400,7 +440,12 @@ public class LevelScene implements GameScene{
                         if (checkShapesIntersect(ball.getBallNode(), block.getBlockNode())){
                             ball.collideWithBlock(block);
                             blockMatrix.handleBlockHit(block, row, col);
-                            score += block.getPointValue();
+                            if (doublePoints) {
+                                score += (block.getPointValue() * 2);
+                            }
+                            else {
+                                score += block.getPointValue();
+                            }
                             updateScoreLabel();
                             rowHasBlockMissing = true;
                         }

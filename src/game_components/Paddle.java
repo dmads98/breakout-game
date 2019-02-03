@@ -13,16 +13,18 @@ public class Paddle {
     private static final double PADDLE_HEIGHT = 20.0;
     private static final double PADDLE_ARC_WIDTH = 20.0;
     private static final double PADDLE_ARC_HEIGHT = 20.0;
+    public static final double DEFAULT_PADDLE_WIDTH = 100.0;
+    public static final double STRECHED_PADDLE_WIDTH = 150.0;
 
     private Rectangle paddle;
     private double paddleSpeed;
 
 
-    public Paddle(double xPos, double yPos, double width){
+    public Paddle(double xPos, double yPos){
         paddle = new Rectangle();
         paddle.setX(xPos);
         paddle.setY(yPos);
-        paddle.setWidth(width);
+        paddle.setWidth(DEFAULT_PADDLE_WIDTH);
         paddle.setHeight(PADDLE_HEIGHT);
         paddle.setArcWidth(PADDLE_ARC_WIDTH);
         paddle.setArcHeight(PADDLE_ARC_HEIGHT);

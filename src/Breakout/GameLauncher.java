@@ -29,7 +29,7 @@ public class GameLauncher extends Application {
         currentSceneIndex = 0;
         breakoutScenes[0] = new SplashScene();
         for (int levelNum = 1; levelNum <= TOTAL_LEVELS; levelNum++){
-            breakoutScenes[levelNum] = new LevelScene(levelNum);
+            breakoutScenes[levelNum] = new LevelScene(levelNum, FRAMES_PER_SECOND);
         }
         stage.setScene(breakoutScenes[0].setUpScene());
         stage.setTitle("Breakout");
