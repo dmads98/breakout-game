@@ -21,7 +21,7 @@ public class PowerUp extends ColorBlock {
     private Text powerUpLabel;
     private Group powerUpGroup;
     private String powerUpIdentifier;
-    public boolean released = false;
+    private boolean released = false;
 
 
     PowerUp(double xPos, double yPos, int colorIdentifier, int powerUpCode){
@@ -40,6 +40,10 @@ public class PowerUp extends ColorBlock {
 
     Group getPowerUpGroup(){
         return powerUpGroup;
+    }
+
+    public boolean isReleased() {
+        return released;
     }
 
     public String getPowerUpIdentifier(){

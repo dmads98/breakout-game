@@ -360,19 +360,13 @@ public class LevelScene implements GameScene{
         var pList = powerUpController.getPowerUpList();
         for (int index = 0; index < pList.size(); index++) {
             var powerUp = pList.get(index);
-            if (powerUp == null){
-                continue;
-            }
-            if (powerUp.released) {
+            if (powerUp != null && powerUp.isReleased()) {
                 if (levelReset){
                     powerUpController.removePowerUp(powerUp, index);
-                    continue;
-                }
-                if (checkShapesIntersect(powerUp.getPowerUpIcon(), paddle.getPaddleNode())){
+                } else if (checkShapesIntersect(powerUp.getPowerUpIcon(), paddle.getPaddleNode())){
                     activatePowerUp(powerUp.getPowerUpIdentifier());
                     powerUpController.removePowerUp(powerUp, index);
-                }
-                else{
+                } else{
                     powerUp.updateLocation();
                     if (powerUp.checkForBottomBoundaryCollision(LEVEL_HEIGHT)){
                         powerUpController.removePowerUp(powerUp, index);

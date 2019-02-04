@@ -29,7 +29,7 @@ public class BlockMatrix {
 
     /**
      * The dimensions of the matrix for each level is pre-determined in PLAN.txt.
-     * @param levelNumber
+     * @param levelNumber number of level
      */
     private void createMatrix(int levelNumber) {
         switch (levelNumber){
@@ -162,6 +162,14 @@ public class BlockMatrix {
         return powerUpList;
     }
 
+    /**
+     * This method contains logic for dealing with ToughBlocks, PowerUp, and regular ColorBlocks after ball-block
+     * collisions.
+     *
+     * @param block the block that was hit
+     * @param row   the row of the block in the block matrix
+     * @param col   the column of the block in the block matrix
+     */
     public void handleBlockHit(Block block, int row, int col){
         if ((block instanceof ToughBlock) && (!((ToughBlock) block).checkIfHitOnce())) {
             ((ToughBlock) block).setHitOnceColor();
